@@ -1,0 +1,38 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root  
+      MYSQL_DATABASE: CRUD     
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql     
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql                     
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+
+  springboot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: springboot_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/CRUD
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
+    driver: local
